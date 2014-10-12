@@ -1,15 +1,12 @@
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.apache.poi.hssf.record.formula.functions.Cell;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -21,11 +18,6 @@ public class traitementFichierXSL {
 
 	private String Libellecompte, libelleannee1,libelleannee2,libelleannee3,libellebudget1,libellebudget2;
 
-	private static final int CODE_FONCTIONNEMENT = 1;
-	private static final int CODE_LOCAUX = 2;
-	private static final int CODE_SECOURS = 3;
-	private static final int CODE_ACTIVITES = 4;
-	private static final int CODE_SUBVENTION = 5;
 	private String libellefichier;
 
 	private POIFSFileSystem fichierlecture;
@@ -63,24 +55,24 @@ public class traitementFichierXSL {
 		
 		//Parcourt des libelles
 		
-		for ( int i =0; i<6; i++){
+		for ( int i =0; i<7; i++){
 			HSSFRow row = rowIt.next();
 			
-			if(i==1)				
-				libellefichier= row.getCell((short)6).getStringCellValue();
-			else if (i==4){
-				this.libelleannee1=row.getCell((short)0).getStringCellValue();
-				this.libelleannee2=row.getCell((short)2).getStringCellValue();
-				this.libelleannee3=row.getCell((short)13).getStringCellValue();
-				this.libellebudget1=row.getCell((short)5).getStringCellValue();
+			if(i==2)				
+				libellefichier= row.getCell((short)7).getRichStringCellValue().getString();
+			else if (i==5){
+				this.libelleannee1=row.getCell((short)1).getRichStringCellValue().getString();
+				this.libelleannee2=row.getCell((short)3).getRichStringCellValue().getString();
+				this.libelleannee3=row.getCell((short)14).getRichStringCellValue().getString();
+				this.libellebudget1=row.getCell((short)6).getRichStringCellValue().getString();
 				
 			}
-			else if (i==5){			
-				this.libelleannee1+= "-"+(int)row.getCell((short)0).getNumericCellValue();
-				this.libelleannee2+= "-"+(int)row.getCell((short)2).getNumericCellValue();
-				this.libelleannee3+= "-"+row.getCell((short)13).getStringCellValue();
-				this.libellebudget1+= "-"+(int)row.getCell((short)5).getNumericCellValue();
-				this.libellebudget2="Budget-"+((int)row.getCell((short)5).getNumericCellValue()+1);
+			else if (i==6){			
+				this.libelleannee1+= "-"+(int)row.getCell((short)1).getNumericCellValue();
+				this.libelleannee2+= "-"+(int)row.getCell((short)3).getNumericCellValue();
+				this.libelleannee3+= "-"+row.getCell((short)14).getRichStringCellValue().getString();
+				this.libellebudget1+= "-"+(int)row.getCell((short)6).getNumericCellValue();
+				this.libellebudget2="Budget-"+((int)row.getCell((short)6).getNumericCellValue()+1);
 			}
 			
 		}
@@ -99,23 +91,21 @@ public class traitementFichierXSL {
 			while (cellIt.hasNext()){
 				HSSFCell cell = cellIt.next();
 				switch (cell.getCellNum()){
-
-
-				case 0:
+				case 1:
 					ligneCompte.setAnnee1((int)cell.getNumericCellValue());
 					break;
-				case 2:
+				case 3:
 					ligneCompte.setAnnee2((int)cell.getNumericCellValue());
 					break;
-				case 5:
+				case 6:
 					ligneCompte.setBudget1((int)cell.getNumericCellValue());
-				case 13:
+				case 14:
 					ligneCompte.setAnnee3((int)cell.getNumericCellValue());
 					break;
 				/*case 12:
 					ligneCompte.setBudget1((int)cell.getNumericCellValue());
 					break;*/
-				case 8:
+				case 9:
 					String k=cell.getRichStringCellValue().getString();
 
 					String code=k.substring(k.indexOf(" | ")+3, k.lastIndexOf("-"));
@@ -243,7 +233,6 @@ public class traitementFichierXSL {
 			//Ajout dans les colonnes
 			Iterator<HSSFCell> cellIt= rowx.cellIterator();
 			while (cellIt.hasNext()){
-				HSSFCell cell = cellIt.next();
 				cell1.setCellValue(classeCompteFonctionnement.getTableauLigneCompte().get(i).getLibelleCentreGension()+" " +classeCompteFonctionnement.getTableauLigneCompte().get(i).getCodecompte()+"-"+classeCompteFonctionnement.getTableauLigneCompte().get(i).getLibelleCompte());
 				cell2.setCellValue(classeCompteFonctionnement.getTableauLigneCompte().get(i).getAnnee1());
 				cell3.setCellValue(classeCompteFonctionnement.getTableauLigneCompte().get(i).getAnnee2());
@@ -350,7 +339,6 @@ public class traitementFichierXSL {
 			//Parcourt des colonnes
 			Iterator<HSSFCell> cellIt= rowx.cellIterator();
 			while (cellIt.hasNext()){
-				HSSFCell cell = cellIt.next();
 				cell1.setCellValue(classeCompteLocaux.getTableauLigneCompte().get(i).getLibelleCentreGension()+" " +classeCompteLocaux.getTableauLigneCompte().get(i).getCodecompte()+"-"+classeCompteLocaux.getTableauLigneCompte().get(i).getLibelleCompte());
 				cell2.setCellValue(classeCompteLocaux.getTableauLigneCompte().get(i).getAnnee1());
 				cell3.setCellValue(classeCompteLocaux.getTableauLigneCompte().get(i).getAnnee2());
@@ -416,7 +404,6 @@ public class traitementFichierXSL {
 			//Parcourt des colonnes
 			Iterator<HSSFCell> cellIt= rowx.cellIterator();
 			while (cellIt.hasNext()){
-				HSSFCell cell = cellIt.next();
 				cell1.setCellValue(classeCompteSecours.getTableauLigneCompte().get(i).getLibelleCentreGension()+" "+classeCompteSecours.getTableauLigneCompte().get(i).getCodecompte()+"-"+classeCompteSecours.getTableauLigneCompte().get(i).getLibelleCompte());
 				cell2.setCellValue(classeCompteSecours.getTableauLigneCompte().get(i).getAnnee1());
 				cell3.setCellValue(classeCompteSecours.getTableauLigneCompte().get(i).getAnnee2());
@@ -485,7 +472,6 @@ public class traitementFichierXSL {
 				//Parcourt des colonnes
 				Iterator<HSSFCell> cellIt= rowx.cellIterator();
 				while (cellIt.hasNext()){
-					HSSFCell cell = cellIt.next();
 					cell1.setCellValue(classeCompteActivites.getTableauLigneCompte().get(i).getLibelleCentreGension()+" "+classeCompteActivites.getTableauLigneCompte().get(i).getCodecompte()+"-"+classeCompteActivites.getTableauLigneCompte().get(i).getLibelleCompte());
 					cell2.setCellValue(classeCompteActivites.getTableauLigneCompte().get(i).getAnnee1());
 					cell3.setCellValue(classeCompteActivites.getTableauLigneCompte().get(i).getAnnee2());
@@ -586,7 +572,6 @@ public class traitementFichierXSL {
 				//Parcourt des colonnes
 				Iterator<HSSFCell> cellIt= rowx.cellIterator();
 				while (cellIt.hasNext()){
-					HSSFCell cell = cellIt.next();
 					cell1.setCellValue(classeCompteSubvention.getTableauLigneCompte().get(i).getCodecompte()+"-"+classeCompteSubvention.getTableauLigneCompte().get(i).getLibelleCompte());
 					cell2.setCellValue(classeCompteSubvention.getTableauLigneCompte().get(i).getAnnee1());
 					cell3.setCellValue(classeCompteSubvention.getTableauLigneCompte().get(i).getAnnee2());
